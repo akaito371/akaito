@@ -1,0 +1,2 @@
+# akaito
+web tĩnh
