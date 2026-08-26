@@ -1,0 +1,741 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VST Domain Manager V11.2.1</title>
+<link rel="stylesheet" href="style.css?v=20260721.19">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">V</div>
+      <div class="brand-text"><strong>VST</strong><span>Domain Manager</span></div>
+      <button class="icon-btn sidebar-toggle" id="sidebarToggle" title="Thu gọn hoặc mở rộng menu" aria-label="Thu gọn hoặc mở rộng menu">☰</button>
+    </div>
+    <nav class="nav">
+      <button class="nav-item active" data-view="dashboard" aria-label="Tổng quan"><span aria-hidden="true">▦</span><em>Tổng quan</em></button>
+      <button class="nav-item" data-view="users" aria-label="Người dùng"><span aria-hidden="true">♙</span><em>Người dùng</em></button>
+      <button class="nav-item" data-view="computers" aria-label="Máy tính"><span aria-hidden="true">▣</span><em>Máy tính</em></button>
+      <button class="nav-item" data-view="statistics" aria-label="Thống kê"><span aria-hidden="true">◔</span><em>Thống kê</em></button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="server-state"><i></i><span>localhost:8093</span></div>
+      <small>PowerShell Edition • V11.2.1</small>
+    </div>
+  </aside>
+
+  <div class="workspace">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">ACTIVE DIRECTORY CONTROL CENTER</p>
+        <h1 id="pageTitle">Tổng quan hệ thống</h1>
+      </div>
+      <div class="top-actions">
+        <div class="clock"><b id="clockTime">--:--</b><span id="clockDate">--/--/----</span></div>
+        <button class="icon-btn" id="themeBtn" title="Đổi giao diện">☾</button>
+        <button class="primary-btn" id="refreshBtn"><span id="refreshIcon">↻</span> Làm mới</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="summary-grid app-view" id="summarySection" data-page="dashboard">
+        <article class="summary-card blue"><div class="card-icon">▣</div><div><span>Tổng máy</span><strong id="total">0</strong><small>Trong Active Directory</small></div></article>
+        <article class="summary-card green"><div class="card-icon">●</div><div><span>Đang Online</span><strong id="online">0</strong><small id="onlineRate">0% tổng số máy</small></div></article>
+        <article class="summary-card red"><div class="card-icon">●</div><div><span>Đang Offline</span><strong id="offline">0</strong><small id="offlineRate">0% tổng số máy</small></div></article>
+        <article class="summary-card orange"><div class="card-icon">◌</div><div><span>Chờ kiểm tra</span><strong id="pending">0</strong><small>Đang cập nhật trạng thái</small></div></article>
+      </section>
+
+      <section class="insights-grid app-view" id="dashboardSection" data-page="dashboard">
+        <article class="panel status-panel">
+          <div class="panel-head"><div><span class="panel-kicker">TRẠNG THÁI</span><h2>Kết nối thiết bị</h2></div><span class="live-pill"><i></i> Live</span></div>
+          <div class="donut-wrap">
+            <div class="donut" id="statusDonut"><div><strong id="donutPercent">0%</strong><span>Online</span></div></div>
+            <div class="legend">
+              <div><span><i class="dot online-dot"></i>Online</span><b id="legendOnline">0</b></div>
+              <div><span><i class="dot offline-dot"></i>Offline</span><b id="legendOffline">0</b></div>
+              <div><span><i class="dot pending-dot"></i>Pending</span><b id="legendPending">0</b></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel os-panel">
+          <div class="panel-head"><div><span class="panel-kicker">HỆ ĐIỀU HÀNH</span><h2>Phân bố Windows</h2></div><span class="panel-note" id="osTotal">0 thiết bị</span></div>
+          <div class="os-chart">
+            <div class="os-row"><div><span>Windows 11</span><b id="win11">0</b></div><div class="bar"><i id="win11Bar"></i></div></div>
+            <div class="os-row"><div><span>Windows 10</span><b id="win10">0</b></div><div class="bar"><i id="win10Bar"></i></div></div>
+            <div class="os-row"><div><span>Windows Server</span><b id="server">0</b></div><div class="bar"><i id="serverBar"></i></div></div>
+            <div class="os-row"><div><span>Khác / chưa rõ</span><b id="otherOs">0</b></div><div class="bar"><i id="otherOsBar"></i></div></div>
+          </div>
+        </article>
+
+        <article class="panel health-panel">
+          <div class="panel-head"><div><span class="panel-kicker">TÀI KHOẢN MÁY</span><h2>Tình trạng AD</h2></div></div>
+          <div class="health-metric"><span>Đang hoạt động</span><b id="enabled">0</b></div>
+          <div class="health-metric warning"><span>Đã Disabled</span><b id="disabled">0</b></div>
+          <div class="health-line"><i id="enabledBar"></i></div>
+          <p id="healthText">Chưa có dữ liệu.</p>
+        </article>
+      </section>
+
+
+      <section class="statistics-page app-view" id="statisticsSection" data-page="statistics" hidden>
+        <div class="statistics-hero panel">
+          <div>
+            <span class="panel-kicker">BÁO CÁO TỔNG HỢP</span>
+            <h2>Thống kê hệ thống</h2>
+            <p>Dữ liệu được tổng hợp trực tiếp từ danh sách máy Active Directory và kết quả quét trạng thái gần nhất.</p>
+          </div>
+          <button class="secondary-btn" id="statisticsExportBtn">⇩ Xuất báo cáo CSV</button>
+        </div>
+
+        <div class="statistics-summary">
+          <article class="stat-card">
+            <span>Tỷ lệ Online</span>
+            <strong id="statsOnlineRate">0%</strong>
+            <small id="statsOnlineDetail">0 / 0 máy</small>
+          </article>
+          <article class="stat-card">
+            <span>Tài khoản Disabled</span>
+            <strong id="statsDisabled">0</strong>
+            <small id="statsDisabledRate">0% tổng số máy</small>
+          </article>
+          <article class="stat-card">
+            <span>Windows 11</span>
+            <strong id="statsWindows11">0</strong>
+            <small id="statsWindows11Rate">0% tổng số máy</small>
+          </article>
+          <article class="stat-card">
+            <span>Số lượng OU</span>
+            <strong id="statsOuCount">0</strong>
+            <small>Đơn vị tổ chức có máy tính</small>
+          </article>
+        </div>
+
+        <div class="statistics-grid">
+          <article class="panel statistics-panel">
+            <div class="panel-head">
+              <div><span class="panel-kicker">THEO HỆ ĐIỀU HÀNH</span><h2>Phân bố thiết bị</h2></div>
+              <span class="panel-note" id="statsOsTotal">0 thiết bị</span>
+            </div>
+            <div class="stats-bars">
+              <div class="stats-bar-row"><div><span>Windows 11</span><b id="statsWin11Value">0</b></div><div class="bar"><i id="statsWin11Bar"></i></div></div>
+              <div class="stats-bar-row"><div><span>Windows 10</span><b id="statsWin10Value">0</b></div><div class="bar"><i id="statsWin10Bar"></i></div></div>
+              <div class="stats-bar-row"><div><span>Windows Server</span><b id="statsServerValue">0</b></div><div class="bar"><i id="statsServerBar"></i></div></div>
+              <div class="stats-bar-row"><div><span>Khác / chưa rõ</span><b id="statsOtherValue">0</b></div><div class="bar"><i id="statsOtherBar"></i></div></div>
+            </div>
+          </article>
+
+          <article class="panel statistics-panel">
+            <div class="panel-head">
+              <div><span class="panel-kicker">TOP ĐƠN VỊ</span><h2>Máy tính theo OU</h2></div>
+              <span class="panel-note">Top 8</span>
+            </div>
+            <div id="statsOuList" class="ou-stat-list">
+              <div class="statistics-empty">Chưa có dữ liệu.</div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="users-page app-view" id="usersSection" data-page="users" hidden>
+        <div class="users-hero panel">
+          <div><span class="panel-kicker">ACTIVE DIRECTORY</span><h2>Quản lý người dùng</h2><p>Tìm kiếm, mở khóa, kích hoạt, vô hiệu hóa và đặt lại mật khẩu tài khoản Domain.</p></div>
+          <button class="primary-btn" id="adUsersRefresh">↻ Tải danh sách</button>
+        </div>
+        <div class="ad-user-summary">
+          <article class="stat-card"><span>Đã tải</span><strong id="adUserCount">0</strong><small>tài khoản</small></article>
+          <article class="stat-card"><span>Đang hoạt động</span><strong id="adUserEnabled">0</strong><small>Enabled</small></article>
+          <article class="stat-card"><span>Đã vô hiệu hóa</span><strong id="adUserDisabled">0</strong><small>Disabled</small></article>
+          <article class="stat-card"><span>Đang bị khóa</span><strong id="adUserLocked">0</strong><small>Locked out</small></article>
+        </div>
+        <div class="panel ad-users-panel">
+          <div class="toolbar ad-users-toolbar">
+            <div class="searchbox"><span>⌕</span><input id="adUserSearch" type="search" placeholder="Tên hiển thị, tài khoản, email..." autocomplete="off"><kbd>Enter</kbd></div>
+            <select id="adUserStatusFilter"><option value="">Tất cả trạng thái</option><option value="enabled">Đang hoạt động</option><option value="disabled">Đã vô hiệu hóa</option><option value="locked">Đang bị khóa</option><option value="expired">Mật khẩu hết hạn</option><option value="never">Chưa từng đăng nhập</option></select>
+            <button class="secondary-btn" id="adUserExportBtn">⇩ Xuất CSV</button><button class="secondary-btn" id="adUserCopyBtn" disabled>⧉ Copy thông tin</button><button class="secondary-btn" id="adPermissionBtn" disabled>🛡 Kiểm tra quyền</button>
+          </div>
+          <div id="adUsersStatus" class="scan-status compact"><div><span>Nhấn “Tải danh sách” để bắt đầu</span><small>Tải tối đa 2.000 tài khoản; tìm kiếm và lọc thực hiện tức thời</small></div></div>
+          <div class="ad-users-layout">
+            <aside class="ad-ou-panel">
+              <div class="ad-ou-head"><div><span class="panel-kicker">ĐƠN VỊ TỔ CHỨC</span><h3>Cây OU</h3></div><button class="icon-btn" id="adOuClear" title="Hiện tất cả">⌂</button></div>
+              <div id="adOuTree" class="ad-ou-tree"><button class="ad-ou-item active" data-ou-path=""><span>▣</span><b>Tất cả người dùng</b><em>0</em></button></div>
+            </aside>
+            <div class="tablebox ad-users-tablebox">
+              <table class="ad-users-table"><thead><tr><th>Tài khoản</th><th>Họ tên</th><th>Phòng ban</th><th>Email</th><th>Trạng thái</th><th>Đăng nhập cuối</th></tr></thead><tbody id="adUsersBody"><tr><td colspan="6" class="empty">Chưa có dữ liệu.</td></tr></tbody></table>
+            </div>
+            <aside class="ad-user-detail" id="adUserDetail">
+              <div class="ad-user-empty"><b>Chọn một tài khoản</b><p>Thông tin và thao tác quản trị sẽ hiển thị tại đây.</p></div>
+            </aside>
+          </div>
+          <div id="adPermissionPanel" class="ad-permission-panel" hidden></div>
+        </div>
+      </section>
+
+      <section class="panel computer-panel app-view" id="computersSection" data-page="computers">
+        <div class="panel-head computer-head">
+          <div><span class="panel-kicker">DANH SÁCH THIẾT BỊ</span><h2>Máy tính trong Domain</h2></div>
+          <div class="head-actions">
+            <label class="auto-refresh"><input type="checkbox" id="autoRefresh"><span></span>Tự làm mới 5 phút</label>
+            <button class="secondary-btn" id="exportBtn">⇩ Xuất CSV</button>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="searchbox"><span aria-hidden="true">⌕</span><input id="search" type="search" autocomplete="off" spellcheck="false" aria-label="Tìm kiếm thiết bị" placeholder="Tìm tên máy, IP, Windows hoặc OU..."><kbd>Ctrl K</kbd></div>
+          <select id="statusFilter" aria-label="Lọc trạng thái"><option value="">Tất cả trạng thái</option><option value="Online">Online</option><option value="Offline">Offline</option><option value="Pending">Đang kiểm tra</option></select>
+          <select id="osFilter" aria-label="Lọc hệ điều hành"><option value="">Tất cả hệ điều hành</option><option value="Windows 11">Windows 11</option><option value="Windows 10">Windows 10</option><option value="Server">Windows Server</option></select>
+          <select id="ouFilter" aria-label="Lọc OU"><option value="">Tất cả OU</option></select>
+          <select id="pageSize" aria-label="Số dòng mỗi trang"><option value="25">25 dòng</option><option value="50" selected>50 dòng</option><option value="100">100 dòng</option><option value="200">200 dòng</option></select>
+          <button class="clear-btn" id="clearFilters" title="Xóa bộ lọc">×</button>
+        </div>
+
+        <div class="scan-status">
+          <div><span id="progressText">Chưa tải dữ liệu</span><small id="lastUpdated">Chưa cập nhật</small></div>
+          <b id="scanPercent">0%</b>
+          <div class="progress-track"><i id="progressBar"></i></div>
+        </div>
+
+        <div class="tablebox" role="region" aria-label="Danh sách máy tính" tabindex="0">
+          <table id="computerTable">
+            <thead><tr>
+              <th class="check-col"><input type="checkbox" id="selectAll"></th>
+              <th data-sort="Name">Tên máy <span>↕</span></th>
+              <th data-sort="Status">Trạng thái <span>↕</span></th>
+              <th data-sort="IP">Địa chỉ IP <span>↕</span></th>
+              <th data-sort="OS">Hệ điều hành <span>↕</span></th>
+              <th data-sort="LastLogon">Last Logon <span>↕</span></th>
+              <th data-sort="OU">OU <span>↕</span></th>
+              <th class="action-col">Thao tác</th>
+            </tr></thead>
+            <tbody id="tbody"><tr><td colspan="8" class="empty"><div class="loader"></div><b>Đang tải dữ liệu Active Directory...</b></td></tr></tbody>
+          </table>
+        </div>
+
+        <div class="pager">
+          <span id="resultInfo">0 kết quả</span>
+          <div><button id="prev" type="button" aria-label="Trang trước">←</button><span id="pageInfo">Trang 1/1</span><button id="next" type="button" aria-label="Trang sau">→</button></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<div id="toast"><span id="toastIcon">✓</span><div><b id="toastTitle">Thông báo</b><p id="toastText"></p></div></div>
+<div id="confirmModal" class="modal" aria-hidden="true"><div class="modal-card"><div class="modal-icon">!</div><h3 id="confirmTitle">Xác nhận thao tác</h3><p id="confirmText"></p><label>Nhập tên máy để xác nhận<input id="confirmInput" autocomplete="off"></label><div><button class="secondary-btn" id="cancelConfirm">Hủy</button><button class="danger-btn" id="acceptConfirm" disabled>Xác nhận</button></div></div></div>
+
+<div id="contextMenu" class="context-menu" role="menu" aria-hidden="true">
+  <button type="button" role="menuitem" data-action="details"><span>▣</span>Chi tiết máy</button>
+  <button type="button" role="menuitem" data-action="ping"><span>⌁</span>Ping lại</button>
+  <button type="button" role="menuitem" data-action="rdp"><span>↗</span>Mở Remote Desktop</button>
+  <button type="button" role="menuitem" data-action="cshare"><span>▤</span>Mở ổ C$</button>
+  <div class="context-separator"></div>
+  <button type="button" role="menuitem" data-action="copy-name"><span>□</span>Sao chép tên máy</button>
+  <button type="button" role="menuitem" data-action="copy-ip"><span>□</span>Sao chép địa chỉ IP</button>
+  <div class="context-separator"></div>
+  <button type="button" role="menuitem" data-action="restart" class="warning"><span>↻</span>Khởi động lại</button>
+  <button type="button" role="menuitem" data-action="shutdown" class="danger"><span>⏻</span>Tắt máy</button>
+</div>
+<div id="srStatus" class="sr-only" role="status" aria-live="polite"></div>
+
+<div id="computerDrawerBackdrop" class="drawer-backdrop" aria-hidden="true"></div>
+<aside id="computerDrawer" class="computer-drawer" aria-hidden="true">
+  <div class="drawer-header">
+    <div>
+      <span class="panel-kicker">COMPUTER MANAGER</span>
+      <h2 id="detailName">—</h2>
+      <div id="detailStatus" class="detail-status pending">Đang tải</div>
+    </div>
+    <div class="drawer-header-actions"><button type="button" class="drawer-expand" id="detailExpand" title="Mở toàn màn hình" aria-label="Mở toàn màn hình">⛶</button><button type="button" class="drawer-refresh" id="detailRefresh" title="Làm mới">↻</button><button type="button" class="drawer-close" id="detailClose" title="Đóng">×</button></div>
+  </div>
+
+  <div class="drawer-actions">
+    <button type="button" data-detail-action="ping">⌁<span>Ping</span></button>
+    <button type="button" data-detail-action="rdp">↗<span>RDP</span></button>
+    <button type="button" data-detail-action="cshare">▤<span>C$</span></button>
+    <button type="button" data-detail-action="restart" class="warning">↻<span>Restart</span></button>
+    <button type="button" data-detail-action="shutdown" class="danger">⏻<span>Shutdown</span></button>
+  </div>
+
+  <div id="detailLoading" class="detail-loading">
+    <div class="loader"></div>
+    <b>Đang lấy thông tin máy tính...</b>
+    <small>Máy đích cần online và tài khoản hiện tại phải có quyền truy cập WMI.</small>
+  </div>
+
+  <div id="detailContent" class="detail-content" hidden>
+    <nav class="detail-tabs" aria-label="Chi tiết máy tính">
+      <button type="button" class="detail-tab active" data-detail-tab="overview">Tổng quan</button>
+      <button type="button" class="detail-tab" data-detail-tab="network">Network</button>
+      <button type="button" class="detail-tab" data-detail-tab="services">Services</button>
+      <button type="button" class="detail-tab" data-detail-tab="processes">Processes</button>
+      <button type="button" class="detail-tab" data-detail-tab="software">Software</button>
+      <button type="button" class="detail-tab" data-detail-tab="events">Events</button>
+      <button type="button" class="detail-tab" data-detail-tab="remote">Remote</button>
+      <button type="button" class="detail-tab" data-detail-tab="diagnostic">Chẩn đoán</button>
+    </nav>
+
+    <div class="detail-tab-panel active" data-detail-panel="overview">
+    <section class="detail-section">
+      <div class="section-title-row"><h3>Thông tin chung</h3><span id="basicLoadState" class="load-state idle">Chờ</span></div>
+      <div class="detail-grid">
+        <div><span>Người dùng</span><b id="detailUser">—</b></div>
+        <div><span>Địa chỉ IP</span><b id="detailIP">—</b></div>
+        <div><span>Địa chỉ MAC</span><b id="detailMAC">—</b></div>
+        <div><span>Uptime</span><b id="detailUptime">—</b></div>
+        <div class="wide"><span>Windows</span><b id="detailWindows">—</b></div>
+        <div class="wide"><span>Last Logon AD</span><b id="detailLastLogon">—</b></div><div class="wide"><span>Chẩn đoán kết nối</span><b id="detailDiagnosis">—</b></div><div class="wide"><span>Trạng thái Network</span><b><span id="networkLoadState" class="load-state idle">Chờ</span></b></div>
+      </div>
+    </section>
+
+    <section class="detail-section">
+      <div class="section-title-row"><h3>Phần cứng</h3><span id="hardwareLoadState" class="load-state idle">Chờ</span></div>
+      <div class="detail-grid">
+        <div class="wide"><span>Model</span><b id="detailModel">—</b></div>
+        <div class="wide"><span>CPU</span><b id="detailCPU">—</b></div>
+        <div><span>RAM</span><b id="detailRAM">—</b></div>
+        <div><span>Serial</span><b id="detailSerial">—</b></div>
+      </div>
+    </section>
+
+    <section class="detail-section">
+      <div class="section-title-row">
+        <h3>Ổ đĩa</h3>
+        <div class="section-status-group"><small id="detailDiskCount"></small><span id="disksLoadState" class="load-state idle">Chờ</span></div>
+      </div>
+      <div id="detailDisks" class="disk-list"></div>
+    </section>
+
+
+    </div>
+
+    <div class="detail-tab-panel" data-detail-panel="network" hidden>
+      <section class="detail-section">
+        <div class="section-title-row">
+          <div>
+            <h3>Thông tin Network</h3>
+            <small>Dữ liệu từ card mạng đang hoạt động trên máy đích</small>
+          </div>
+          <span id="networkTabLoadState" class="load-state idle">Chưa tải</span>
+        </div>
+        <div class="detail-grid">
+          <div class="wide"><span>Card mạng</span><b id="detailAdapter">—</b></div>
+          <div><span>Địa chỉ IP</span><b id="detailNetworkIP">—</b></div>
+          <div><span>Địa chỉ MAC</span><b id="detailNetworkMAC">—</b></div>
+          <div class="wide"><span>Default Gateway</span><b id="detailGateway">—</b></div>
+          <div class="wide"><span>DNS Server</span><b id="detailDNS">—</b></div>
+          <div><span>DHCP</span><b id="detailDHCP">—</b></div>
+          <div><span>DHCP Server</span><b id="detailDHCPServer">—</b></div>
+        </div>
+      </section>
+    </div>
+
+
+    <div class="detail-tab-panel" data-detail-panel="services" hidden>
+      <section class="detail-section services-section">
+        <div class="section-title-row services-title-row">
+          <div>
+            <h3>Services Manager</h3>
+            <small>Danh sách dịch vụ Windows trên máy đích</small>
+          </div>
+          <button type="button" id="reloadServices" class="mini-action-btn">↻ Tải lại</button>
+        </div>
+
+        <div class="services-toolbar">
+          <label class="services-search">
+            <span>⌕</span>
+            <input id="serviceSearch" type="search" placeholder="Tìm tên hoặc mô tả dịch vụ..." autocomplete="off">
+          </label>
+          <select id="serviceStatusFilter" aria-label="Lọc trạng thái dịch vụ">
+            <option value="all">Tất cả trạng thái</option>
+            <option value="running">Running</option>
+            <option value="stopped">Stopped</option>
+          </select>
+        </div>
+
+        <div class="services-summary">
+          <div><span>Tổng số</span><b id="servicesTotal">0</b></div>
+          <div><span>Running</span><b id="servicesRunning">0</b></div>
+          <div><span>Stopped</span><b id="servicesStopped">0</b></div>
+          <span id="servicesLoadState" class="load-state idle">Chưa tải</span>
+        </div>
+
+        <div id="servicesMessage" class="services-message">
+          Chọn tab Services để tải danh sách.
+        </div>
+
+        <div class="services-table-wrap">
+          <table class="services-table">
+            <thead>
+              <tr>
+                <th>Dịch vụ</th>
+                <th>Trạng thái</th>
+                <th>Startup</th>
+                <th>PID</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="servicesTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+
+    <div class="detail-tab-panel" data-detail-panel="processes" hidden>
+      <section class="detail-section processes-section">
+        <div class="section-title-row processes-title-row">
+          <div>
+            <h3>Process Manager</h3>
+            <small>Tiến trình đang chạy trên máy đích</small>
+          </div>
+          <button type="button" id="reloadProcesses" class="mini-action-btn">↻ Tải lại</button>
+        </div>
+
+        <div class="processes-toolbar">
+          <label class="processes-search">
+            <span>⌕</span>
+            <input id="processSearch" type="search" placeholder="Tìm tên, PID hoặc đường dẫn..." autocomplete="off">
+          </label>
+          <select id="processSort" aria-label="Sắp xếp tiến trình">
+            <option value="memory-desc">RAM cao nhất</option>
+            <option value="cpu-desc">CPU cao nhất</option>
+            <option value="name-asc">Tên A–Z</option>
+            <option value="pid-asc">PID tăng dần</option>
+          </select>
+        </div>
+
+        <div class="processes-summary">
+          <div><span>Tổng số</span><b id="processesTotal">0</b></div>
+          <div><span>Tổng RAM</span><b id="processesMemory">0 MB</b></div>
+          <div><span>CPU cao nhất</span><b id="processesTopCPU">0%</b></div>
+          <span id="processesLoadState" class="load-state idle">Chưa tải</span>
+        </div>
+
+        <div id="processesMessage" class="services-message">
+          Chọn tab Processes để tải danh sách.
+        </div>
+
+        <div class="processes-table-wrap">
+          <table class="processes-table">
+            <thead>
+              <tr>
+                <th>Process</th>
+                <th>PID</th>
+                <th>CPU</th>
+                <th>RAM</th>
+                <th>Session</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="processesTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+
+    <div class="detail-tab-panel" data-detail-panel="software" hidden>
+      <section class="detail-section software-section">
+        <div class="section-title-row">
+          <div>
+            <h3>Installed Software</h3>
+            <small>Phần mềm được cài đặt trên máy đích</small>
+          </div>
+          <div class="software-actions">
+            <button type="button" id="exportSoftwareCsv" class="mini-action-btn">⇩ CSV</button>
+            <button type="button" id="reloadSoftware" class="mini-action-btn">↻ Tải lại</button>
+          </div>
+        </div>
+
+        <div class="software-toolbar">
+          <label class="software-search">
+            <span>⌕</span>
+            <input id="softwareSearch" type="search"
+              placeholder="Tìm tên, phiên bản hoặc nhà phát hành..."
+              autocomplete="off">
+          </label>
+          <select id="softwareArchitectureFilter">
+            <option value="all">Tất cả kiến trúc</option>
+            <option value="64-bit">64-bit</option>
+            <option value="32-bit">32-bit</option>
+          </select>
+        </div>
+
+        <div class="software-summary">
+          <div><span>Phần mềm</span><b id="softwareTotal">0</b></div>
+          <div><span>Nhà phát hành</span><b id="softwarePublishers">0</b></div>
+          <div><span>Đang hiển thị</span><b id="softwareVisible">0</b></div>
+          <span id="softwareLoadState" class="load-state idle">Chưa tải</span>
+        </div>
+
+        <div id="softwareMessage" class="services-message">
+          Chọn tab Software để tải danh sách.
+        </div>
+
+        <div class="software-table-wrap">
+          <table class="software-table">
+            <thead>
+              <tr>
+                <th>Tên phần mềm</th>
+                <th>Phiên bản</th>
+                <th>Nhà phát hành</th>
+                <th>Ngày cài</th>
+                <th>Kiến trúc</th>
+              </tr>
+            </thead>
+            <tbody id="softwareTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+
+    <div class="detail-tab-panel" data-detail-panel="events" hidden>
+      <section class="detail-section events-section">
+        <div class="section-title-row">
+          <div>
+            <h3>Event Viewer Manager</h3>
+            <small>Đọc nhật ký Windows từ máy đích</small>
+          </div>
+          <div class="events-actions">
+            <button type="button" id="exportEventsCsv" class="mini-action-btn">⇩ CSV</button>
+            <button type="button" id="reloadEvents" class="mini-action-btn">↻ Tải lại</button>
+          </div>
+        </div>
+
+        <div class="events-toolbar">
+          <select id="eventLogName">
+            <option value="System">System</option>
+            <option value="Application">Application</option>
+            <option value="Security">Security</option>
+          </select>
+
+          <select id="eventTimeRange">
+            <option value="24">24 giờ</option>
+            <option value="168">7 ngày</option>
+            <option value="720">30 ngày</option>
+          </select>
+
+          <label class="events-search">
+            <span>⌕</span>
+            <input id="eventSearch" type="search"
+              placeholder="Tìm Event ID, nguồn hoặc nội dung..."
+              autocomplete="off">
+          </label>
+        </div>
+
+        <div class="event-level-filters">
+          <label class="event-level critical">
+            <input type="checkbox" value="1" checked>
+            <span>Critical</span>
+          </label>
+          <label class="event-level error">
+            <input type="checkbox" value="2" checked>
+            <span>Error</span>
+          </label>
+          <label class="event-level warning">
+            <input type="checkbox" value="3" checked>
+            <span>Warning</span>
+          </label>
+          <label class="event-level information">
+            <input type="checkbox" value="4">
+            <span>Information</span>
+          </label>
+        </div>
+
+        <div class="events-summary">
+          <div><span>Tổng</span><b id="eventsTotal">0</b></div>
+          <div><span>Critical</span><b id="eventsCritical">0</b></div>
+          <div><span>Error</span><b id="eventsError">0</b></div>
+          <div><span>Warning</span><b id="eventsWarning">0</b></div>
+          <div><span>Hiển thị</span><b id="eventsVisible">0</b></div>
+          <span id="eventsLoadState" class="load-state idle">Chưa tải</span>
+        </div>
+
+        <div id="eventsMessage" class="services-message">
+          Chọn tab Events để tải nhật ký.
+        </div>
+
+        <div class="events-table-wrap">
+          <table class="events-table">
+            <thead>
+              <tr>
+                <th>Thời gian</th>
+                <th>Mức độ</th>
+                <th>ID</th>
+                <th>Nguồn</th>
+                <th>Nội dung</th>
+              </tr>
+            </thead>
+            <tbody id="eventsTableBody"></tbody>
+          </table>
+        </div>
+
+        <div id="eventDetailBox" class="event-detail-box" hidden>
+          <div class="event-detail-header">
+            <div>
+              <b id="eventDetailTitle">Chi tiết Event</b>
+              <small id="eventDetailMeta"></small>
+            </div>
+            <button type="button" id="closeEventDetail" class="mini-action-btn">× Đóng</button>
+          </div>
+          <div class="event-detail-grid">
+            <div><span>Log</span><b id="eventDetailLog">—</b></div>
+            <div><span>Record ID</span><b id="eventDetailRecord">—</b></div>
+            <div><span>Machine</span><b id="eventDetailMachine">—</b></div>
+            <div><span>User SID</span><b id="eventDetailUser">—</b></div>
+          </div>
+          <pre id="eventDetailMessage"></pre>
+        </div>
+      </section>
+    </div>
+
+
+    <div class="detail-tab-panel" data-detail-panel="remote" hidden>
+      <section class="detail-section remote-section">
+        <div class="section-title-row">
+          <div>
+            <h3>Remote Tools Center</h3>
+            <small>Kết nối, phiên đăng nhập, nguồn, thông báo và máy in</small>
+          </div>
+          <button type="button" id="reloadRemote" class="mini-action-btn">↻ Làm mới</button>
+        </div>
+
+        <div id="remoteMessage" class="services-message">
+          Chọn tab Remote để kiểm tra máy đích.
+        </div>
+
+        <div class="remote-status-grid">
+          <div><span>Ping</span><b id="remotePing">Chưa kiểm tra</b><small id="remoteResponse">—</small></div>
+          <div><span>SMB 445</span><b id="remoteSMB">—</b></div>
+          <div><span>RPC 135</span><b id="remoteRPC">—</b></div>
+          <div><span>WinRM</span><b id="remoteWinRM">—</b></div>
+          <div><span>WMI/CIM</span><b id="remoteWMI">—</b></div>
+          <div><span>Người dùng</span><b id="remoteUser">—</b></div>
+        </div>
+
+        <div class="remote-tool-grid">
+          <div class="remote-card">
+            <h4>Kết nối nhanh</h4>
+            <div class="remote-button-grid">
+              <button type="button" data-remote-open="rdp">🖥 Mở RDP</button>
+              <button type="button" data-remote-open="cshare">📂 Mở C$</button>
+              <button type="button" data-remote-open="adminshare">🗂 Mở ADMIN$</button>
+              <button type="button" id="copyRemoteName">⧉ Copy tên máy</button>
+            </div>
+          </div>
+
+          <div class="remote-card danger-card">
+            <h4>Power Control</h4>
+            <label>Thời gian chờ
+              <select id="remotePowerDelay">
+                <option value="0">Ngay lập tức</option>
+                <option value="30" selected>30 giây</option>
+                <option value="60">60 giây</option>
+                <option value="300">5 phút</option>
+              </select>
+            </label>
+            <div class="remote-button-grid">
+              <button type="button" data-power-action="restart" class="warning">↻ Restart</button>
+              <button type="button" data-power-action="shutdown" class="danger">⏻ Shutdown</button>
+              <button type="button" data-power-action="abort">× Hủy lệnh</button>
+            </div>
+          </div>
+
+          <div class="remote-card remote-message-card">
+            <h4>Gửi thông báo</h4>
+            <label>Session
+              <select id="remoteMessageSession">
+                <option value="-1">Tất cả session</option>
+              </select>
+            </label>
+            <textarea id="remoteMessageText" maxlength="500" placeholder="Nhập nội dung thông báo..."></textarea>
+            <button type="button" id="sendRemoteMessage">📢 Gửi thông báo</button>
+          </div>
+        </div>
+
+        <div class="remote-lists-grid">
+          <div class="remote-card">
+            <div class="remote-card-title">
+              <h4>User Sessions</h4>
+              <span id="remoteSessionCount">0</span>
+            </div>
+            <div class="remote-table-wrap">
+              <table class="remote-table">
+                <thead><tr><th>User</th><th>ID</th><th>Trạng thái</th><th>Idle</th><th></th></tr></thead>
+                <tbody id="remoteSessionsBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="remote-card">
+            <div class="remote-card-title">
+              <h4>Printers</h4>
+              <span id="remotePrinterCount">0</span>
+            </div>
+            <div class="remote-table-wrap">
+              <table class="remote-table">
+                <thead><tr><th>Máy in</th><th>Driver</th><th>Port</th><th>Mặc định</th></tr></thead>
+                <tbody id="remotePrintersBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="detail-tab-panel" data-detail-panel="diagnostic" hidden>
+    <section class="detail-section diagnostic-section">
+      <div class="section-title-row">
+        <div>
+          <h3>Diagnostic Center</h3>
+          <small>Kiểm tra đường kết nối và quyền quản trị từ xa</small>
+        </div>
+        <button type="button" id="runDiagnostic" class="diagnostic-run">Chạy kiểm tra</button>
+      </div>
+
+      <div id="diagnosticSummary" class="diagnostic-summary">
+        Chưa chạy chẩn đoán.
+      </div>
+
+      <div id="diagnosticResults" class="diagnostic-results"></div>
+    </section>
+    </div>
+
+    <section id="detailErrorBox" class="detail-error" hidden>
+      <b>Không lấy được thông tin từ xa</b>
+      <p id="detailErrorText"></p>
+      <small>Kiểm tra máy đang online, Windows Firewall, quyền quản trị và dịch vụ WMI/RPC trên máy đích.</small>
+    </section>
+  </div>
+</aside>
+
+
+
+<div id="adUserContextMenu" class="ad-context-menu" hidden>
+  <button data-ad-menu="properties">ⓘ Thuộc tính</button>
+  <button data-ad-menu="copy">⧉ Copy thông tin</button>
+  <hr>
+  <button data-ad-menu="reset-password">🔑 Đặt lại mật khẩu</button>
+  <button data-ad-menu="unlock">🔓 Mở khóa</button>
+  <button data-ad-menu="enable">✓ Kích hoạt</button>
+  <button data-ad-menu="disable" class="danger-text">⊘ Vô hiệu hóa</button>
+</div>
+
+<div id="adPasswordModal" class="ad-modal-backdrop" hidden>
+  <div class="ad-modal" role="dialog" aria-modal="true" aria-labelledby="adPasswordTitle">
+    <div class="ad-modal-head"><div><span class="panel-kicker">ACTIVE DIRECTORY</span><h3 id="adPasswordTitle">Đặt lại mật khẩu</h3></div><button class="icon-btn" id="adPasswordClose">×</button></div>
+    <p id="adPasswordUser" class="ad-modal-user"></p>
+    <label>Mật khẩu mới<div class="ad-password-row"><input id="adPasswordNew" type="password" autocomplete="new-password" minlength="8"><button type="button" id="adPasswordToggle">👁</button><button type="button" id="adPasswordGenerate">🎲 Tạo</button></div></label>
+    <label>Xác nhận mật khẩu<input id="adPasswordConfirm" type="password" autocomplete="new-password" minlength="8"></label>
+    <div id="adPasswordStrength" class="ad-password-strength"><i></i><span>Chưa nhập mật khẩu</span></div>
+    <label class="ad-check"><input id="adPasswordMustChange" type="checkbox" checked> Yêu cầu đổi mật khẩu khi đăng nhập lần tới</label>
+    <label class="ad-check"><input id="adPasswordUnlock" type="checkbox" checked> Mở khóa tài khoản sau khi đặt lại</label>
+    <div id="adPasswordError" class="ad-modal-error" hidden></div>
+    <div class="ad-modal-actions"><button class="secondary-btn" id="adPasswordCancel">Hủy</button><button class="primary-btn" id="adPasswordSubmit">🔑 Đặt lại mật khẩu</button></div>
+  </div>
+</div>
+<script src="app.js?v=20260721.19"></script>
+</body>
+</html>

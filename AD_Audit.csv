@@ -1,0 +1,4 @@
+﻿"Time","Operator","Target","Action","Success","Message","DistinguishedName"
+"2026-07-21T13:18:04","VST\VCM-NAN36-01","VCM-NAN36-04","reset-password","False","Exception calling ""Invoke"" with ""2"" argument(s): ""Access is denied. (Exception from HRESULT: 0x80070005 (E_ACCESSDENIED))""","CN=VCM-NAN36-04,OU=Users,OU=3.MÁY KỸ THUẬT-\>VST,OU=TTKD - TBS,DC=VST,DC=VN"
+"2026-07-21T13:40:48","VST\VCM-NAN36-01","VCM-BTE15-01","enable","False","Exception calling ""CommitChanges"" with ""0"" argument(s): ""Access is denied.
+""","CN=VCM-BTE15-01,OU=Disabled User ST,OU=User Computer Diasbled,DC=VST,DC=VN"
